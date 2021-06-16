@@ -22,9 +22,7 @@ class ScriptGenerator extends React.Component {
     const { placeholderValuePairs } = this.state;
     if (placeholder === "METRICS" && !(placeholderValuePairs["METRICS"].includes(value))) {
       placeholderValuePairs[placeholder].push(value);
-    } else if (placeholder === "LAYERS") {
-      placeholderValuePairs[placeholder].push(value);
-    } else if (placeholder !== "METRICS" && placeholder !== "LAYERS") {
+    } else if (placeholder !== "METRICS") {
       placeholderValuePairs[placeholder] = value;
     }
     this.setState({ placeholderValuePairs })

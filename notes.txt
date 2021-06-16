@@ -1,0 +1,4 @@
+Deploy:
+npm run build
+firebase init (use "build" instead of "public")
+firebase deploy
