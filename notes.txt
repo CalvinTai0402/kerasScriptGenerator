@@ -2,3 +2,14 @@ Deploy:
 npm run build
 firebase init (use "build" instead of "public")
 firebase deploy
+
+TODO:
+1. Add code snipets section:
+    - k-fold validation
+    - iterated k-fold validation
+    - hold-out validation
+    - shuffle
+3. Add preprocessing stage
+    - input size
+    - shuffle
+4. add callbacks

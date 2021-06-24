@@ -116,18 +116,18 @@
 }
 
 .select-search__option.is-selected {
-    background: #2FCC8B;
+    background: #808583;
     color: #fff;
 }
 
 .select-search__option.is-highlighted,
 .select-search__option:not(.is-selected):hover {
-    background: rgba(47, 204, 139, 0.1);
+    background: rgba(181, 190, 187, 0.1);
 }
 
 .select-search__option.is-highlighted.is-selected,
 .select-search__option.is-selected:hover {
-    background: #2eb378;
+    background: rgb(77, 83, 81);
     color: #fff;
 }
 
@@ -185,7 +185,7 @@
 }
 
 .select-search:not(.select-search--multiple) .select-search__input:hover {
-    border-color: #2FCC8B;
+    border-color: #b0b9b6;
 }
 
 
@@ -235,3 +235,14 @@
     background-color:#000000;
     color:#FFFFFF;
 }
+
+.footer-text {
+    text-align: center;
+    /* color: #868e96; */
+    font-weight: bold;
+    font-family: "Google Sans Regular";
+  }
+  
+  .footer-div {
+    margin-top: 2rem;
+  }
