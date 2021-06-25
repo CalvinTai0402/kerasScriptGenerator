@@ -8,7 +8,7 @@ export default function Footer() {
                 ----- Made by <a href="https://calvintai0402.github.io/index.html#/">Calvin</a> -----
             </p>
             <p className="footer-text" style={{ color: "black" }}>
-                This is in development. All PRs are welcome @ <a href="https://github.com/CalvinTai0402/kerasScriptGenerator">repo</a>
+                This is in development. Most of the Keras code belongs to François Chollet. All PRs are welcome @ <a href="https://github.com/CalvinTai0402/kerasScriptGenerator">repo</a>
             </p>
         </div>
     );

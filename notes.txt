@@ -12,4 +12,3 @@ TODO:
 3. Add preprocessing stage
     - input size
     - shuffle
-4. add callbacks

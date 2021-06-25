@@ -5,29 +5,29 @@ import LossDropDown from "./DropDowns/LossDropDown";
 import MetricsDropDown from "./DropDowns/MetricsDropDown";
 import CallbacksDropDown from "./DropDowns/CallbacksDropDown";
 import ExampleDropDown from "./DropDowns/ExampleDropDown"
+import DataPreprocessingDropDown from "./DropDowns/DataPreprocessingDropDown"
 import Stage from "./Stage"
-import { fileContent } from './data'
-import { MNISTCategoricalClassification, MNISTCategoricalClassificationWithCNN, IMDBBinaryClassification, BostonHousingRegression } from "./example"
+import { fileContent, imageDataPreprocessing, vectorizeSequence } from './data'
+import { MNISTCategoricalClassification, MNISTCategoricalClassificationWithCNN, IMDBBinaryClassification, BostonHousingRegression, MNISTCategoricalClassificationWithTransferLearningAndFineTuning } from "./example"
 
 class ScriptGenerator extends React.Component {
   state = {
     fileContent: fileContent,
     example: MNISTCategoricalClassification,
     placeholderValuePairs: {
+      "DATAPREPROCESSING": "",
       "OPTIMIZERS": "",
       "LOSS": "",
       "METRICS": [],
       "LAYERS": [],
-      "CALLBACKS": []
+      "CALLBACKS": [],
     }
   };
 
   handleChange = (placeholder, value) => {
     const { placeholderValuePairs } = this.state;
     placeholderValuePairs[placeholder] = value;
-    this.setState({ placeholderValuePairs }, () => {
-      console.log(this.state.placeholderValuePairs)
-    })
+    this.setState({ placeholderValuePairs })
   }
 
   updateFileContent = async () => {
@@ -37,7 +37,20 @@ class ScriptGenerator extends React.Component {
       if ((placeholder === "METRICS" && placeholderValuePairs["METRICS"].length > 1) || (placeholder === "CALLBACKS" && placeholderValuePairs["CALLBACKS"].length > 1) || (placeholder === "LAYERS" && placeholderValuePairs["LAYERS"].length > 1)) {
         value = value.join(",\n")
       }
-      fileContentTemp = fileContentTemp.replace(placeholder, value);
+      if (placeholder !== "DATAPREPROCESSING") {
+        fileContentTemp = fileContentTemp.replace(placeholder, value);
+      }
+    }
+    switch (this.state.placeholderValuePairs["DATAPREPROCESSING"]) {
+      case "imageDataPreprocessing":
+        console.log(imageDataPreprocessing)
+        fileContentTemp = fileContentTemp.replace("DATAPREPROCESSING", imageDataPreprocessing);
+        break;
+      case "vectorizeSequence":
+        fileContentTemp = fileContentTemp.replace("DATAPREPROCESSING", vectorizeSequence);
+        break;
+      default:
+        break;
     }
     this.setState({ fileContent: fileContentTemp })
   }
@@ -71,6 +84,9 @@ class ScriptGenerator extends React.Component {
       case "BostonHousingRegression":
         this.setState({ example: BostonHousingRegression })
         break;
+      case "MNISTCategoricalClassificationWithTransferLearningAndFineTuning":
+        this.setState({ example: MNISTCategoricalClassificationWithTransferLearningAndFineTuning })
+        break;
       default:
         this.setState({ example: MNISTCategoricalClassification })
     }
@@ -88,6 +104,8 @@ class ScriptGenerator extends React.Component {
   render() {
     return (
       <React.Fragment>
+        <Stage stage={"Data preprocessing:"} />
+        <DataPreprocessingDropDown handleChange={this.handleChange} />
         <Stage stage={"Model Building:"} />
         <CallbacksDropDown handleChange={this.handleChange} />
         <LayersDropDown handleChange={this.handleChange} />

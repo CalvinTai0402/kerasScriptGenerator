@@ -72,11 +72,85 @@ export const examples = [
     { name: 'IMDBBinaryClassification', value: 'IMDBBinaryClassification' },
     { name: 'MNISTCategoricalClassification', value: 'MNISTCategoricalClassification' },
     { name: 'MNISTCategoricalClassificationWithCNN', value: 'MNISTCategoricalClassificationWithCNN' },
-    { name: 'BostonHousingRegression', value: 'BostonHousingRegression' }]
+    { name: 'BostonHousingRegression', value: 'BostonHousingRegression' },
+    { name: 'MNISTCategoricalClassificationWithTransferLearningAndFineTuning', value: 'MNISTCategoricalClassificationWithTransferLearningAndFineTuning' }]
 
 export const callbacks = [
     { name: 'keras.callbacks.EarlyStopping(monitor="val_sparse_categorical_accuracy",patience=3)', value: 'keras.callbacks.EarlyStopping(monitor="val_sparse_categorical_accuracy",patience=3)' },
     { name: 'keras.callbacks.ModelCheckpoint(filepath="saved_model",monitor="val_loss",save_best_only=True)', value: 'keras.callbacks.ModelCheckpoint(filepath="saved_model",monitor="val_loss",save_best_only=True)' }]
+
+
+export const dataPreprocessing = [
+    { name: 'imageDataPreprocessing', value: 'imageDataPreprocessing' },
+    { name: 'vectorizeSequence', value: 'vectorizeSequence' }]
+
+export const imageDataPreprocessing = `# Expects the directory to look like this:
+# cats_vs_dogs_small/
+# ...train/
+# ......cat/
+# ........cat0.jpg
+# ........cat1.jpg
+# ......dog/
+# ........dog0.jpg
+# ........dog1.jpg
+# ...validation/
+# ......cat/
+# ........cat0.jpg
+# ........cat1.jpg
+# ......dog/
+# ........dog0.jpg
+# ........dog1.jpg
+# ...test/
+# ......cat/
+# ........cat0.jpg
+# ........cat1.jpg
+# ......dog/
+# ........dog0.jpg
+# ........dog1.jpg
+# This snippet will create and return three tf.data.Dataset objects (train_dataset, validation_dataset, test_dataset) that yields batches of images from their subdirectories (cat & dog), 
+# together with labels 0 and 1 (0 corresponding to cat and 1 corresponding to dog). Note if you use this snippet you will have to replacet the training step with this:
+# history = model.fit(
+#    train_dataset,
+#    epochs=30,
+#    validation_data=validation_dataset,
+#    callbacks=callbacks)
+# and the evaluation step with: 
+# test_loss, test_acc = model.evaluate(test_dataset)
+from tensorflow.keras.preprocessing import image_dataset_from_directory
+
+train_dataset = image_dataset_from_directory(
+    new_base_dir / "train",
+    image_size=(180, 180),
+    batch_size=32)
+validation_dataset = image_dataset_from_directory(
+    new_base_dir / "validation",
+    image_size=(180, 180),
+    batch_size=32)
+test_dataset = image_dataset_from_directory(
+    new_base_dir / "test",
+    image_size=(180, 180),
+    batch_size=32)
+`
+
+export const vectorizeSequence = `
+def vectorize_sequences(sequences, dimension=10000):
+    results = np.zeros((len(sequences), dimension))
+    for i, sequence in enumerate(sequences):
+        results[i, sequence] = 1.
+    return results
+# To use this, the input sequences is expected to be a list of sequence where each sequence (a sequence is just a Python
+# list) has integer values that don't exceed 10000 (this can be changed via the dimension parameter). Example:
+from tensorflow.keras.datasets import imdb
+(train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=10000)
+x_train = vectorize_sequences(train_data)
+x_test = vectorize_sequences(test_data)
+y_train = np.asarray(train_labels).astype("float32")
+y_test = np.asarray(test_labels).astype("float32")
+x_val = x_train[:10000]
+partial_x_train = x_train[10000:]
+y_val = y_train[:10000]
+partial_y_train = y_train[10000:]
+`
 
 export let fileContent = `from tensorflow.keras.datasets import imdb
 import numpy as np
@@ -84,24 +158,10 @@ import matplotlib.pyplot as plt
 from tensorflow import keras
 from tensorflow.keras import layers
 
-# Data preprocessing (expects the outputs: partial_x_train, x_val, x_test, partial_y_train, y_val, y_test)
-# Example (courtesy to François Chollet):
-# def vectorize_sequences(sequences, dimension=10000):
-#     results = np.zeros((len(sequences), dimension))
-#     for i, sequence in enumerate(sequences):
-#         results[i, sequence] = 1.
-#     return results
-# (train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=10000)
-# x_train = vectorize_sequences(train_data)
-# x_test = vectorize_sequences(test_data)
-# y_train = np.asarray(train_labels).astype("float32")
-# y_test = np.asarray(test_labels).astype("float32")
-# x_val = x_train[:10000]
-# partial_x_train = x_train[10000:]
-# y_val = y_train[:10000]
-# partial_y_train = y_train[10000:]
+# Data preprocessing
+DATAPREPROCESSING
 
-# Building and compiling the model
+# Building and compiling the model (expects the inputs: partial_x_train, x_val, x_test, partial_y_train, y_val, y_test)
 callbacks_list = [CALLBACKS]
 model = keras.Sequential([
     LAYERS
@@ -117,6 +177,13 @@ history = model.fit(partial_x_train,
     batch_size=512,
     validation_data=(x_val, y_val),
     callbacks=callbacks_list)
+
+# Save your model manually
+model.save('myModel')
+# Note that you can load your model as such: model = keras.models.load_model("myModel")
+
+# Evaluate
+results = model.evaluate(x_test, y_test)
 
 # Plot the training and validation loss
 history_dict = history.history

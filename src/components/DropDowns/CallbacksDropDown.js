@@ -23,23 +23,23 @@ class CallbacksDropDown extends React.Component {
 
     handleButtonClicked = () => {
         const { callbacksList } = this.state;
-        let nextLayerIndex = callbacksList.length
-        callbacksList.push([<SelectSearch search filterOptions={fuzzySearch} options={callbacks} onChange={(value) => this.handleChange(value, nextLayerIndex)} placeholder="Select a layer" printOptions="on-focus" />, ""])
+        let nextCallbackIndex = callbacksList.length
+        callbacksList.push([<SelectSearch search filterOptions={fuzzySearch} options={callbacks} onChange={(value) => this.handleChange(value, nextCallbackIndex)} placeholder="Select a callback" printOptions="on-focus" />, ""])
         this.setState({ callbacksList })
 
     }
 
     render() {
         const { callbacksList } = this.state;
-        let displayedCallbacks = callbacksList.map((layer) =>
-            layer[0]
+        let displayedCallbacks = callbacksList.map((callback) =>
+            callback[0]
         );
         return (
             <div>
                 <p><u>Callbacks:</u></p>
                 {displayedCallbacks}
                 <button className="button" onClick={this.handleButtonClicked}>
-                    Add another layer
+                    Add another callback
                 </button>
             </div>
         );
