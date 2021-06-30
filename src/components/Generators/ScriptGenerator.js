@@ -32,7 +32,7 @@ class ScriptGenerator extends React.Component {
     let fileContentTemp = fileContent;
     for (let [placeholder, value] of Object.entries(placeholderValuePairs)) {
       if ((placeholder === "METRICS" && placeholderValuePairs["METRICS"].length > 1) || (placeholder === "CALLBACKS" && placeholderValuePairs["CALLBACKS"].length > 1) || (placeholder === "LAYERS" && placeholderValuePairs["LAYERS"].length > 1)) {
-        value = value.join(",\n")
+        value = value.join(",\n\t")
       }
       if (placeholder !== "DATAPREPROCESSING") {
         fileContentTemp = fileContentTemp.replace(placeholder, value);

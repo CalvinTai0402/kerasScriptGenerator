@@ -4,12 +4,21 @@ firebase init (use "build" instead of "public")
 firebase deploy
 
 TODO:
-1. Add code snipets section:
-    - k-fold validation
-    - iterated k-fold validation
-    - hold-out validation
-    - shuffle
 3. Add preprocessing stage
     - input size
-    - shuffle
-    - standardization/ normalization
+
+Notes for DL:
+1.  layers.SeparableConv2D() is much leaner than layers.Conv2D() and it does not necessarily 
+    perform worse. In fact, it might perform better.
+
+2.  We don't need the bias vector if BatchNormalization is used because it normalizes the output
+    of the previous layer, essentially rendering the bias useless. it's good practice to put the
+    Activation layer after the BatchNormalization layer. E.g.:
+    x = layers.SeparableConv2D(size, 3, padding="same", use_bias=False)(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.Activation("relu")(x)
+
+3.  We standardize/normalize so that each feature contribute the same amount to gradient descent.
+    We use standardization if the assumed underlying distribution is Gaussian.
+
+4. K-fold validation and iterative k-fold is useful when we have very little data.

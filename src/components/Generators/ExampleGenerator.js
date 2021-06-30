@@ -3,7 +3,8 @@ import ExampleDropDown from "../DropDowns/ExampleDropDown"
 import Stage from "../Stage"
 import {
     MNISTCategoricalClassification, MNISTCategoricalClassificationWithCNN, IMDBBinaryClassification,
-    BostonHousingRegression, MNISTCategoricalClassificationWithTransferLearningAndFineTuning, OxfordPetsImageSegmentation
+    BostonHousingRegression, MNISTCategoricalClassificationWithTransferLearningAndFineTuning,
+    OxfordPetsImageSegmentation, heatMapGeneration, activationVisualization
 } from "../example"
 
 class ExampleGenerator extends React.Component {
@@ -30,6 +31,12 @@ class ExampleGenerator extends React.Component {
                 break;
             case "OxfordPetsImageSegmentation":
                 this.setState({ example: OxfordPetsImageSegmentation })
+                break;
+            case "heatMapGeneration":
+                this.setState({ example: heatMapGeneration })
+                break;
+            case "activationVisualization":
+                this.setState({ example: activationVisualization })
                 break;
             default:
                 this.setState({ example: MNISTCategoricalClassification })

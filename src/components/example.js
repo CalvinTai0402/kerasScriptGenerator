@@ -714,3 +714,172 @@ display_mask(mask)
 
 # Train on colab: https://research.google.com/colaboratory/
 `
+
+export const heatMapGeneration = `from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import array_to_img
+from tensorflow.keras import layers
+from tensorflow import keras
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import numpy as np
+import random
+import os
+
+# Download model
+model = keras.applications.xception.Xception(weights="imagenet")
+model.summary()
+
+# Get the image and preprocess it
+img_path = keras.utils.get_file(
+    fname="elephant.jpg",
+    origin="https://img-datasets.s3.amazonaws.com/elephant.jpg")
+
+def get_img_array(img_path, target_size):
+    img = keras.preprocessing.image.load_img(img_path, target_size=target_size)
+    array = keras.preprocessing.image.img_to_array(img)
+    array = np.expand_dims(array, axis=0)
+    array = keras.applications.xception.preprocess_input(array)
+    return array
+
+img_array = get_img_array(img_path, target_size=(299, 299))
+
+# Take a look at what the model thinks the image is
+preds = model.predict(img_array)
+print(keras.applications.xception.decode_predictions(preds, top=3)[0])
+print(np.argmax(preds[0])) # African_elephant is class 386
+
+# Generate heatmap
+last_conv_layer_name = "block14_sepconv2_act"
+classifier_layer_names = [
+    "avg_pool",
+    "predictions",
+]
+last_conv_layer = model.get_layer(last_conv_layer_name)
+last_conv_layer_model = keras.Model(model.inputs, last_conv_layer.output)
+classifier_input = keras.Input(shape=last_conv_layer.output.shape[1:])
+x = classifier_input
+for layer_name in classifier_layer_names:
+    x = model.get_layer(layer_name)(x)
+classifier_model = keras.Model(classifier_input, x)
+with tf.GradientTape() as tape:
+    last_conv_layer_output = last_conv_layer_model(img_array)
+    tape.watch(last_conv_layer_output)
+    preds = classifier_model(last_conv_layer_output)
+    top_pred_index = tf.argmax(preds[0])
+    top_class_channel = preds[:, top_pred_index]
+
+grads = tape.gradient(top_class_channel, last_conv_layer_output)
+pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2)).numpy()
+last_conv_layer_output = last_conv_layer_output.numpy()[0]
+for i in range(pooled_grads.shape[-1]):
+    last_conv_layer_output[:, :, i] *= pooled_grads[i]
+heatmap = np.mean(last_conv_layer_output, axis=-1)
+
+# Plot heatmap
+heatmap = np.maximum(heatmap, 0)
+heatmap /= np.max(heatmap)
+plt.matshow(heatmap)
+
+# Superimpose heatmap and image
+img = keras.preprocessing.image.load_img(img_path)
+img = keras.preprocessing.image.img_to_array(img)
+
+heatmap = np.uint8(255 * heatmap)
+
+jet = cm.get_cmap("jet")
+jet_colors = jet(np.arange(256))[:, :3]
+jet_heatmap = jet_colors[heatmap]
+
+jet_heatmap = keras.preprocessing.image.array_to_img(jet_heatmap)
+jet_heatmap = jet_heatmap.resize((img.shape[1], img.shape[0]))
+jet_heatmap = keras.preprocessing.image.img_to_array(jet_heatmap)
+
+superimposed_img = jet_heatmap * 0.4 + img
+superimposed_img = keras.preprocessing.image.array_to_img(superimposed_img)
+
+save_path = "elephant_cam.jpg"
+superimposed_img.save(save_path)
+
+# Train on colab: https://research.google.com/colaboratory/
+`
+
+export const activationVisualization = `from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import array_to_img
+from tensorflow.keras import layers
+from tensorflow import keras
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import numpy as np
+import random
+import os
+
+# Download model
+model = keras.applications.xception.Xception(weights="imagenet")
+model.summary()
+
+# Get the image and preprocess it
+img_path = keras.utils.get_file(
+    fname="cat.jpg",
+    origin="https://img-datasets.s3.amazonaws.com/cat.jpg")
+
+def get_img_array(img_path, target_size):
+    img = load_img(
+        img_path, target_size=target_size)
+    array = img_to_array(img)
+    array = np.expand_dims(array, axis=0)
+    return array
+
+img_tensor = get_img_array(img_path, target_size=(299, 299))
+
+# Plot the image
+plt.axis("off")
+plt.imshow(img_tensor[0].astype("uint8"))
+plt.show()
+
+# Instantiating a model that returns layer activations
+layer_outputs = []
+layer_names = []
+for layer in model.layers:
+    if isinstance(layer, (layers.SeparableConv2D, layers.MaxPooling2D)):
+        layer_outputs.append(layer.output)
+        layer_names.append(layer.name)
+activation_model = keras.Model(inputs=model.input, outputs=layer_outputs)
+
+# Compute and plot the activation
+activations = activation_model.predict(img_tensor)
+first_layer_activation = activations[0]
+plt.matshow(first_layer_activation[0, :, :, 5], cmap="viridis")
+
+# Plot all activations. Note that the details of the specific input become
+# less and less noticeable as we go deeper into the network, whereas the 
+# features that resemble the class (cat) become more prominent.
+images_per_row = 16
+for layer_name, layer_activation in zip(layer_names, activations):
+    n_features = layer_activation.shape[-1]
+    size = layer_activation.shape[1]
+    n_cols = n_features // images_per_row
+    display_grid = np.zeros(((size + 1) * n_cols - 1,
+                             images_per_row * (size + 1) - 1))
+    for col in range(n_cols):
+        for row in range(images_per_row):
+            channel_index = col * images_per_row + row
+            channel_image = layer_activation[0, :, :, channel_index].copy()
+            if channel_image.sum() != 0:
+                channel_image -= channel_image.mean()
+                channel_image /= channel_image.std()
+                channel_image *= 64
+                channel_image += 128
+            channel_image = np.clip(channel_image, 0, 255).astype("uint8")
+            display_grid[
+                col * (size + 1): (col + 1) * size + col,
+                row * (size + 1) : (row + 1) * size + row] = channel_image
+    scale = 1. / size
+    plt.figure(figsize=(scale * display_grid.shape[1],
+                        scale * display_grid.shape[0]))
+    plt.title(layer_name)
+    plt.grid(False)
+    plt.axis("off")
+    plt.imshow(display_grid, aspect="auto", cmap="viridis")
+
+# Train on colab: https://research.google.com/colaboratory/
+`
