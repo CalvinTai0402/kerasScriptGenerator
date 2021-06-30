@@ -242,7 +242,7 @@
 
 .centerVandH {
     margin: auto;
-    width: 50%;
+    width: 80%;
     padding: 10px;
 }
 
@@ -256,6 +256,7 @@
 }
 
 #sidebar .pro-sidebar {
+    width: 20px;
     min-height: 100vh;
     height: 100%;
 }

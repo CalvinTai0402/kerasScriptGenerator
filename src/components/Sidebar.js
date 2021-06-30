@@ -16,7 +16,7 @@ import {
 
 class Sidebar extends React.Component {
     state = {
-        menuCollapse: false
+        menuCollapse: true
     };
 
     menuIconClick = () => {
