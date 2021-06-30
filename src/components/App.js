@@ -1,12 +1,10 @@
 import './App.css';
-import ScriptGenerator from './ScriptGenerator'
-import Footer from './Footer';
+import Sidebar from './Sidebar'
 
 function App() {
   return (
-    <div className="App">
-      <ScriptGenerator></ScriptGenerator>
-      <Footer></Footer>
+    <div >
+      <Sidebar />
     </div>
   );
 }

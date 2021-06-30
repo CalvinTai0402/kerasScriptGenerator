@@ -1,19 +1,16 @@
 import React from "react";
-import LayersDropDown from "./DropDowns/LayersDropDown";
-import OptimizerDropDown from "./DropDowns/OptimizerDropDown";
-import LossDropDown from "./DropDowns/LossDropDown";
-import MetricsDropDown from "./DropDowns/MetricsDropDown";
-import CallbacksDropDown from "./DropDowns/CallbacksDropDown";
-import ExampleDropDown from "./DropDowns/ExampleDropDown"
-import DataPreprocessingDropDown from "./DropDowns/DataPreprocessingDropDown"
-import Stage from "./Stage"
-import { fileContent, imageDataPreprocessing, vectorizeSequence } from './data'
-import { MNISTCategoricalClassification, MNISTCategoricalClassificationWithCNN, IMDBBinaryClassification, BostonHousingRegression, MNISTCategoricalClassificationWithTransferLearningAndFineTuning } from "./example"
+import LayersDropDown from "../DropDowns/LayersDropDown";
+import OptimizerDropDown from "../DropDowns/OptimizerDropDown";
+import LossDropDown from "../DropDowns/LossDropDown";
+import MetricsDropDown from "../DropDowns/MetricsDropDown";
+import CallbacksDropDown from "../DropDowns/CallbacksDropDown";
+import DataPreprocessingDropDown from "../DropDowns/DataPreprocessingDropDown"
+import Stage from "../Stage"
+import { fileContent, imageDataPreprocessing, vectorizeSequence } from '../data'
 
 class ScriptGenerator extends React.Component {
   state = {
     fileContent: fileContent,
-    example: MNISTCategoricalClassification,
     placeholderValuePairs: {
       "DATAPREPROCESSING": "",
       "OPTIMIZERS": "",
@@ -70,37 +67,6 @@ class ScriptGenerator extends React.Component {
     this.reset();
   }
 
-  pickExample = (exampleTitle) => {
-    switch (exampleTitle) {
-      case "IMDBBinaryClassification":
-        this.setState({ example: IMDBBinaryClassification })
-        break;
-      case "MNISTCategoricalClassification":
-        this.setState({ example: MNISTCategoricalClassification })
-        break;
-      case "MNISTCategoricalClassificationWithCNN":
-        this.setState({ example: MNISTCategoricalClassificationWithCNN })
-        break;
-      case "BostonHousingRegression":
-        this.setState({ example: BostonHousingRegression })
-        break;
-      case "MNISTCategoricalClassificationWithTransferLearningAndFineTuning":
-        this.setState({ example: MNISTCategoricalClassificationWithTransferLearningAndFineTuning })
-        break;
-      default:
-        this.setState({ example: MNISTCategoricalClassification })
-    }
-  }
-
-  downloadExample = async () => {
-    const element = document.createElement("a");
-    const file = new Blob([this.state.example], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = "example.py";
-    document.body.appendChild(element); // Required for this to work in FireFox
-    element.click();
-  }
-
   render() {
     return (
       <React.Fragment>
@@ -116,12 +82,6 @@ class ScriptGenerator extends React.Component {
         <div>
           <button className="button" onClick={this.downloadScript}>Download Script</button>
         </div>
-        <Stage stage={"Download examples:"} />
-        <ExampleDropDown pickExample={this.pickExample} />
-        <div>
-          <button className="button" onClick={this.downloadExample}>Download Example</button>
-        </div>
-
       </React.Fragment>
 
     );

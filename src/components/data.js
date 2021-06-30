@@ -62,7 +62,8 @@ export const layers = [
     { name: 'keras.layers.Dense(10, activation="relu")', value: 'keras.layers.Dense(10, activation="relu")' },
     { name: 'keras.layers.Dense(1, activation="sigmoid")', value: 'keras.layers.Dense(1, activation="sigmoid")' },
     { name: 'keras.layers.Dense(10, activation="softmax")', value: 'keras.layers.Dense(10, activation="softmax")' },
-    { name: 'keras.layers.Conv2D(filters=32, kernel_size=3, activation="relu")', value: 'keras.layers.Conv2D(filters=32, kernel_size=3, activation="relu")' },
+    { name: 'keras.layers.Conv2D(filters=32, kernel_size=3, strides=1, activation="relu")', value: 'keras.layers.Conv2D(filters=32, kernel_size=3, strides=1, activation="relu")' },
+    { name: 'keras.layers.Conv2DTranspose(256, 3, activation="relu", padding="same")', value: 'keras.layers.Conv2DTranspose(256, 3, activation="relu", padding="same")' },
     { name: 'keras.layers.MaxPooling2D(pool_size=2)', value: 'keras.layers.MaxPooling2D(pool_size=2)' },
     { name: 'keras.layers.Flatten()', value: 'keras.layers.Flatten()' },
     { name: 'keras.layers.Input(shape=(28, 28, 1))', value: 'keras.layers.Input(shape=(28, 28, 1))' },
@@ -73,7 +74,11 @@ export const examples = [
     { name: 'MNISTCategoricalClassification', value: 'MNISTCategoricalClassification' },
     { name: 'MNISTCategoricalClassificationWithCNN', value: 'MNISTCategoricalClassificationWithCNN' },
     { name: 'BostonHousingRegression', value: 'BostonHousingRegression' },
-    { name: 'MNISTCategoricalClassificationWithTransferLearningAndFineTuning', value: 'MNISTCategoricalClassificationWithTransferLearningAndFineTuning' }]
+    { name: 'MNISTCategoricalClassificationWithTransferLearningAndFineTuning', value: 'MNISTCategoricalClassificationWithTransferLearningAndFineTuning' },
+    { name: 'OxfordPetsImageSegmentation', value: 'OxfordPetsImageSegmentation' }]
+
+export const utilities = [
+    { name: 'colabFileUploadDownload', value: 'colabFileUploadDownload' }]
 
 export const callbacks = [
     { name: 'keras.callbacks.EarlyStopping(monitor="val_sparse_categorical_accuracy",patience=3)', value: 'keras.callbacks.EarlyStopping(monitor="val_sparse_categorical_accuracy",patience=3)' },

@@ -12,3 +12,4 @@ TODO:
 3. Add preprocessing stage
     - input size
     - shuffle
+    - standardization/ normalization

@@ -1,10 +1,3 @@
-.App {
-    margin: auto;
-    width: 50%;
-    padding: 10px;
-}
-
-
 /**
  * Main wrapper
  */
@@ -241,8 +234,28 @@
     /* color: #868e96; */
     font-weight: bold;
     font-family: "Google Sans Regular";
-  }
-  
-  .footer-div {
-    margin-top: 2rem;
-  }
+}
+
+.footer-div {
+    margin-top: 4rem;
+}
+
+.centerVandH {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.sideBarHeader{
+    margin: auto;
+    padding: 10px;
+}
+
+#sidebar .clickable {
+    cursor: pointer;
+}
+
+#sidebar .pro-sidebar {
+    min-height: 100vh;
+    height: 100%;
+}

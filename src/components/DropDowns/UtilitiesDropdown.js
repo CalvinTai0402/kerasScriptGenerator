@@ -1,23 +1,23 @@
 import React from "react";
 
 import SelectSearch from 'react-select-search';
-import { examples } from '../data'
+import { utilities } from '../data'
 import fuzzySearch from "../../utilities/fuzzySearch";
 
-class ExampleDropDown extends React.Component {
+class UtilitiesDropDown extends React.Component {
     render() {
         return (
             <div>
-                <p><u>Examples:</u></p>
+                <p><u>Utilities:</u></p>
                 <SelectSearch
-                    options={examples}
+                    options={utilities}
                     search
                     filterOptions={fuzzySearch}
-                    onChange={(value) => this.props.pickExample(value)}
+                    onChange={(value) => this.props.pickUtility(value)}
                 />
             </div>
         );
     }
 }
 
-export default ExampleDropDown;
+export default UtilitiesDropDown;
